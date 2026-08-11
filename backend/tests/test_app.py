@@ -38,3 +38,14 @@ def test_asset_classification():
     assert classify_asset("PokePlanet-windows-x86.zip") == ("windows", "x86", "ZIP")
     assert classify_asset("PokePlanet-macos-arm64.dmg") == ("macos", "arm64", "DMG")
     assert classify_asset("PokePlanet-linux-x86_64.AppImage") == ("linux", "x86-64", "APPIMAGE")
+
+
+def test_production_allows_optional_contact_protection():
+    settings = Settings(
+        environment="production",
+        session_secret="a" * 32,
+        database_url="postgresql://website@example.invalid/pokeplanet",
+        discord_client_id="client",
+        discord_client_secret="secret",
+    )
+    settings.validate_production()

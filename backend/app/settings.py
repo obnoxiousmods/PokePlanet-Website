@@ -48,8 +48,6 @@ class Settings(BaseSettings):
                 "DATABASE_URL": self.database_url,
                 "DISCORD_CLIENT_ID": self.discord_client_id,
                 "DISCORD_CLIENT_SECRET": self.discord_client_secret,
-                "CONTACT_WEBHOOK_URL": self.contact_webhook_url,
-                "TURNSTILE_SECRET": self.turnstile_secret,
             }.items()
             if not value
         ]

@@ -205,7 +205,9 @@ async def logout(request: Request) -> JSONResponse:
 
 async def verify_turnstile(state: WebsiteState, token: str, remote_ip: str) -> bool:
     if not state.settings.turnstile_secret:
-        return not state.settings.production
+        # Turnstile is an optional second layer. The honeypot plus application and
+        # nginx rate limits remain active when a site has not provisioned keys yet.
+        return True
     try:
         response = await state.http.post(
             "https://challenges.cloudflare.com/turnstile/v0/siteverify",
