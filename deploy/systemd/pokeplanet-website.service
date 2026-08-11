@@ -1,0 +1,30 @@
+[Unit]
+Description=PokePlanet website and trainer portal
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=pokeplanet-web
+Group=pokeplanet-web
+WorkingDirectory=/srv/pokeplanet-website/current/backend
+EnvironmentFile=/etc/pokeplanet-website.env
+ExecStart=/srv/pokeplanet-website/current/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8791 --workers 2 --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+ReadWritePaths=/srv/pokeplanet-website
+
+[Install]
+WantedBy=multi-user.target
+

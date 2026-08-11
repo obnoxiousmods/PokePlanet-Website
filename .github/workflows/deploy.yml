@@ -1,0 +1,43 @@
+name: Deploy website
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+concurrency:
+  group: pokeplanet-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: astral-sh/setup-uv@v6
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+        env:
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+      - working-directory: backend
+        run: uv sync --frozen --group dev && uv run pytest -q && uv run ruff check app tests
+      - run: tar -czf pokeplanet-website.tar.gz dist backend/pyproject.toml backend/uv.lock backend/app
+      - uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ vars.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          scp pokeplanet-website.tar.gz "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}:/tmp/pokeplanet-website.tar.gz"
+          ssh "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}" sudo /srv/pokeplanet-website/deploy.sh /tmp/pokeplanet-website.tar.gz
+      - run: curl -fsS --retry 8 https://pokeplanet.obby.ca/api/health
+
