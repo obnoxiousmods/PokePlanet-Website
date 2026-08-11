@@ -3,6 +3,7 @@ import pytest
 
 from app.main import create_app
 from app.services import classify_asset
+from app.sessions import decode_payload
 from app.settings import Settings
 
 
@@ -49,3 +50,11 @@ def test_production_allows_optional_contact_protection():
         discord_client_secret="secret",
     )
     settings.validate_production()
+
+
+def test_postgres_json_session_payload_is_decoded():
+    assert decode_payload('{"oauth_state":"state","pkce_verifier":"verifier"}') == {
+        "oauth_state": "state",
+        "pkce_verifier": "verifier",
+    }
+    assert decode_payload("not-json") == {}

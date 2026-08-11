@@ -1,6 +1,7 @@
 import hashlib
 import json
 import secrets
+from collections.abc import Mapping
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -13,6 +14,15 @@ def new_token() -> str:
 
 def token_hash(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
+
+
+def decode_payload(value: Any) -> dict[str, Any]:
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except (TypeError, ValueError):
+            return {}
+    return dict(value) if isinstance(value, Mapping) else {}
 
 
 class SessionStore:
@@ -39,7 +49,7 @@ class SessionStore:
                 "SELECT payload FROM pokeplanet_web.sessions WHERE token_hash = $1 AND expires_at > now()",
                 digest,
             )
-            return dict(row["payload"]) if row else {}
+            return decode_payload(row["payload"]) if row else {}
         item = self.memory.get(digest)
         if not item or item[0] <= datetime.now(UTC):
             self.memory.pop(digest, None)
