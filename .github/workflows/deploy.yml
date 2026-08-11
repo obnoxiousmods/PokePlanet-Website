@@ -2,8 +2,6 @@ name: Deploy website
 
 on:
   workflow_dispatch:
-  push:
-    branches: [master]
 
 concurrency:
   group: pokeplanet-production
@@ -40,4 +38,3 @@ jobs:
           scp pokeplanet-website.tar.gz "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}:/tmp/pokeplanet-website.tar.gz"
           ssh "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}" sudo /srv/pokeplanet-website/deploy.sh /tmp/pokeplanet-website.tar.gz
       - run: curl -fsS --retry 8 https://pokeplanet.obby.ca/api/health
-
