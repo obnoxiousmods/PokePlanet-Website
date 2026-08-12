@@ -2,6 +2,7 @@ import { Check, Palette, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const themes = [
+  ["deadman", "Deadman", "#ff3b3b"],
   ["emerald", "Emerald", "#61f3a5"],
   ["sapphire", "Sapphire", "#58b9ff"],
   ["ruby", "Ruby", "#ff667d"],
@@ -11,7 +12,7 @@ const themes = [
 
 export function ThemePanel() {
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem("pp-theme") || "emerald");
+  const [theme, setTheme] = useState(() => localStorage.getItem("pp-theme") || "deadman");
   const [compact, setCompact] = useState(() => localStorage.getItem("pp-compact") === "true");
   const [motion, setMotion] = useState(() => localStorage.getItem("pp-motion") !== "false");
 

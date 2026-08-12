@@ -7,7 +7,7 @@ vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new Error("offline"))));
 describe("PokePlanet website", () => {
   it("renders the core value proposition", async () => {
     render(<MemoryRouter initialEntries={["/"]}><App /></MemoryRouter>);
-    expect(screen.getByRole("heading", { name: /one world/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /permanent/i })).toBeInTheDocument();
     expect(screen.getAllByText(/no pay-to-win/i)).not.toHaveLength(0);
     await waitFor(() => expect(screen.getByText(/server status unavailable/i)).toBeInTheDocument());
   });

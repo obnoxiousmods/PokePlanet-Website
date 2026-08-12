@@ -1,17 +1,25 @@
-import { Cloud, Gamepad2, Gauge, MessagesSquare, ShieldCheck, Swords } from "lucide-react";
+import { Ban, Cloud, Gauge, MessagesSquare, ShieldCheck, Skull, Swords, Trophy } from "lucide-react";
 
 export const DISCORD_URL = "https://discord.gg/moddingcartel";
 export const GAME_SOURCE_URL = "https://github.com/obnoxiousmods/PokePlanet";
 export const SITE_SOURCE_URL = "https://github.com/obnoxiousmods/PokePlanet-Website";
 export const GAMEPLAY_VIDEO_URL = "https://ss.obby.ca/t_2026_08_10_02_01_24_DLA0eV.mp4";
 
+// The pillars that make Deadman what it is -- the headline of the whole site.
+export const deadmanPillars = [
+  { icon: Skull, title: "Death is permanent", text: "Faint outside a Pokémon Center and that Pokémon is gone for good — laid to rest in a read-only graveyard it never leaves." },
+  { icon: Ban, title: "Capped to your next gym", text: "Party levels and size are gated to the badge ahead of you. Every gym is a real wall; you cannot out-grind it." },
+  { icon: Swords, title: "Everything on the line", text: "Lose a fight in the wild and you drop what you carry. Run out of Pokémon entirely and the run resets to nothing." },
+  { icon: Trophy, title: "One life, ranked", text: "A combat level and a survival ladder track how far you have pushed a run that can end in a single careless step." },
+];
+
 export const features = [
-  { icon: Gamepad2, title: "A shared Hoenn", text: "Meet real trainers in the world, watch them move, and continue your adventure together." },
-  { icon: Cloud, title: "Your journey, everywhere", text: "Your character lives securely on the server and follows you between supported devices." },
-  { icon: Swords, title: "Real trainer battles", text: "Challenge another player and fight a full link battle carried over the network." },
-  { icon: MessagesSquare, title: "Chat that belongs in-game", text: "Talk globally, locally, or privately without leaving the world." },
-  { icon: ShieldCheck, title: "Server-authoritative", text: "Movement, saves, progression, and sessions are validated server-side to protect fair play." },
-  { icon: Gauge, title: "Built to evolve", text: "Experience, encounters, catches, shops, rewards, and species rates are controlled live by the server." },
+  { icon: Skull, title: "Permadeath, server-enforced", text: "A death is final and validated on the server — there is no save-scum, no local file to edit, no way to undo it." },
+  { icon: Swords, title: "High-stakes PvP", text: "Face another Deadman trainer near your badge count and the loser drops everything they were carrying to the floor." },
+  { icon: Gauge, title: "A world that pushes back", text: "Slow experience, scarce money, and low catch rates mean every capture and purchase is a decision you plan for." },
+  { icon: ShieldCheck, title: "Impossible to cheat", text: "Movement, saves, progression, deaths, and the economy are all authored server-side. The client only ever asks." },
+  { icon: MessagesSquare, title: "Chat that belongs in-game", text: "Talk globally, locally, or privately without leaving the world — and read the room before you pick a fight." },
+  { icon: Cloud, title: "Your run, everywhere", text: "Your Deadman character lives on the server and follows you between supported devices, life and all." },
 ];
 
 export const guides = [
