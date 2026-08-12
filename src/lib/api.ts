@@ -1,4 +1,4 @@
-import type { MeResponse, ReleasesResponse, StatusResponse } from "./types";
+import type { DeathsResponse, LadderResponse, MeResponse, ReleasesResponse, StatusResponse } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
@@ -16,6 +16,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   status: () => request<StatusResponse>("/api/status"),
   releases: () => request<ReleasesResponse>("/api/releases"),
+  ladder: (mode: string) => request<LadderResponse>(`/api/ladder?mode=${encodeURIComponent(mode)}`),
+  deaths: (mode: string) => request<DeathsResponse>(`/api/deaths?mode=${encodeURIComponent(mode)}`),
   me: () => request<MeResponse>("/api/me"),
   logout: () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST", body: "{}" }),
   contact: (body: Record<string, string>) =>

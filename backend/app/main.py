@@ -113,6 +113,22 @@ async def releases(request: Request) -> JSONResponse:
     return JSONResponse(await services(request).releases.latest())
 
 
+def _mode_param(request: Request) -> str:
+    return "deadman" if request.query_params.get("mode") == "deadman" else "normal"
+
+
+async def ladder(request: Request) -> JSONResponse:
+    mode = _mode_param(request)
+    rows = await services(request).sessions.leaderboard(mode, 100)
+    return JSONResponse({"mode": mode, "entries": rows})
+
+
+async def deaths(request: Request) -> JSONResponse:
+    mode = _mode_param(request)
+    rows = await services(request).sessions.recent_deaths(mode, 30)
+    return JSONResponse({"mode": mode, "deaths": rows})
+
+
 async def oauth_start(request: Request) -> RedirectResponse | JSONResponse:
     cfg = services(request).settings
     if not cfg.discord_client_id or not cfg.discord_client_secret:
@@ -306,6 +322,8 @@ def create_app(settings: Settings | None = None) -> Starlette:
             Route("/api/health", health),
             Route("/api/status", status),
             Route("/api/releases", releases),
+            Route("/api/ladder", ladder),
+            Route("/api/deaths", deaths),
             Route("/api/auth/discord/start", oauth_start),
             Route("/api/auth/discord/callback", oauth_callback),
             Route("/api/auth/logout", logout, methods=["POST"]),

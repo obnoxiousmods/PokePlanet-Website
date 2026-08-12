@@ -4,7 +4,7 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import { DISCORD_URL, GAME_SOURCE_URL } from "../lib/content";
 import { ThemePanel } from "./ThemePanel";
 
-const links = [["/download", "Download"], ["/guides", "Guides"], ["/about", "About"], ["/roadmap", "Roadmap"], ["/media", "Media"]];
+const links = [["/ladder", "Ladder"], ["/download", "Download"], ["/guides", "Guides"], ["/about", "About"], ["/roadmap", "Roadmap"], ["/media", "Media"]];
 
 export function Logo() {
   return <Link to="/" className="logo" aria-label="PokePlanet home"><span className="logo-orbit"><i /></span><span>Poke<span>Planet</span></span></Link>;

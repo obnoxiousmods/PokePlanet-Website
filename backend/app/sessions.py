@@ -12,6 +12,17 @@ def new_token() -> str:
     return secrets.token_urlsafe(40)
 
 
+def _combat_level(max_level: int, avg_level: float, badges: int) -> int:
+    """The OSRS-style combat level (3..126), mirroring the game server's deadman::combat_level_from.
+
+    A character with no living party (fresh or wiped) is the floor, 3.
+    """
+    if max_level <= 0:
+        return 3
+    raw = round(max_level * 0.9 + avg_level * 0.4 + badges * 4.0)
+    return max(3, min(126, raw))
+
+
 def token_hash(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
@@ -78,6 +89,56 @@ class SessionStore:
         if self.pool:
             await self.pool.execute("DELETE FROM pokeplanet_web.sessions WHERE token_hash = $1", digest)
         self.memory.pop(digest, None)
+
+    async def leaderboard(self, mode: str, limit: int = 100) -> list[dict[str, Any]]:
+        """The top characters in a world, ranked by badges, then Pokedex, then time played.
+
+        Combat level is derived here from the party's max/average level and badge count, matching
+        the game server's own formula so the site and the game agree.
+        """
+        if not self.pool:
+            return []
+        rows = await self.pool.fetch(
+            "SELECT name, badges, pokedex_caught, play_time_s, graveyard_count, "
+            "party_max_level, party_avg_level "
+            "FROM pokeplanet_web.leaderboard WHERE mode = $1 "
+            "ORDER BY badges DESC, pokedex_caught DESC, play_time_s DESC LIMIT $2",
+            mode,
+            limit,
+        )
+        return [
+            {
+                "rank": index + 1,
+                "name": row["name"],
+                "badges": row["badges"],
+                "combat_level": _combat_level(
+                    row["party_max_level"], row["party_avg_level"], row["badges"]
+                ),
+                "pokedex_caught": row["pokedex_caught"],
+                "graveyard": row["graveyard_count"],
+                "play_hours": max(0, row["play_time_s"]) // 3600,
+            }
+            for index, row in enumerate(rows)
+        ]
+
+    async def recent_deaths(self, mode: str, limit: int = 20) -> list[dict[str, Any]]:
+        """The most recent deaths in a world, newest first, for the death feed."""
+        if not self.pool:
+            return []
+        rows = await self.pool.fetch(
+            "SELECT name, species, died_at FROM pokeplanet_web.recent_deaths "
+            "WHERE mode = $1 ORDER BY died_at DESC LIMIT $2",
+            mode,
+            limit,
+        )
+        return [
+            {
+                "name": row["name"],
+                "species": row["species"],
+                "died_on": row["died_at"].date().isoformat(),
+            }
+            for row in rows
+        ]
 
     async def profile_for_discord(self, discord_id: str) -> dict[str, Any] | None:
         if not self.pool:

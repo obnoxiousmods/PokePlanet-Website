@@ -39,6 +39,32 @@ export interface TrainerProfile {
   party: Array<{ species: number; name: string; level: number }>;
 }
 
+export interface LadderEntry {
+  rank: number;
+  name: string;
+  badges: number;
+  combat_level: number;
+  pokedex_caught: number;
+  graveyard: number;
+  play_hours: number;
+}
+
+export interface LadderResponse {
+  mode: string;
+  entries: LadderEntry[];
+}
+
+export interface DeathEntry {
+  name: string;
+  species: number;
+  died_on: string;
+}
+
+export interface DeathsResponse {
+  mode: string;
+  deaths: DeathEntry[];
+}
+
 export interface MeResponse {
   authenticated: boolean;
   user: null | { id: string; username: string; display_name: string; avatar_url: string };
